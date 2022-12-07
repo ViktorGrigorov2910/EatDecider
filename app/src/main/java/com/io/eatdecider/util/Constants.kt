@@ -1,0 +1,25 @@
+package com.io.eatdecider.util
+
+const val CHINESE_FOOD = "Chinese food"
+const val MALL = "Mall"
+const val BOXES = "Boxes"
+const val GRILL = "Grill"
+const val BURGERS = "Burgers"
+const val PIZZA = "Pizza"
+
+const val TITLE = "Eat Decider"
+const val NOT_DECIDED = "Not yet decided!"
+const val PICK_A_PLACE = "Pick a place!"
+const val HISTORY_HEADER = "History"
+const val NO_HISTORY_HEADER = "No history"
+const val NOTHING_TO_BE_CLEARED = "Nothing to be cleared!"
+const val CLEARED = "Cleared!"
+
+const val MONDAY = "Monday"
+const val TUESDAY = "Tuesday"
+const val WEDNESDAY = "Wednesday"
+const val THURSDAY = "Thursday"
+const val FRIDAY = "Friday"
+const val SATURDAY = "Saturday"
+const val SUNDAY = "Sunday"
+const val UNKNOWN = "N/A"
