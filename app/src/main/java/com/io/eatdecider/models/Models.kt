@@ -3,10 +3,12 @@ package com.io.eatdecider.models
 import com.io.eatdecider.util.*
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.util.*
 
 data class Place(val imageId: Int, var placeName: String) {
 
     fun toPreviousPlace(): PreviousPlace = PreviousPlace(
+        id = UUID.randomUUID().toString(),
         imageId = imageId,
         placeName = placeName,
         dayOfWeek = LocalDate.now().dayOfWeek.format()
@@ -14,7 +16,12 @@ data class Place(val imageId: Int, var placeName: String) {
 
 }
 
-data class PreviousPlace(val imageId: Int, val placeName: String, val dayOfWeek: String)
+data class PreviousPlace(
+    val id: String,
+    val imageId: Int,
+    val placeName: String,
+    val dayOfWeek: String
+)
 
 fun DayOfWeek.format(): String {
     return when (this.ordinal) {
@@ -25,6 +32,8 @@ fun DayOfWeek.format(): String {
         4 -> FRIDAY
         5 -> SATURDAY
         6 -> SUNDAY
-        else -> { UNKNOWN }
+        else -> {
+            UNKNOWN
+        }
     }
 }
