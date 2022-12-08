@@ -6,6 +6,7 @@ import com.io.eatdecider.models.Place
 import com.io.eatdecider.models.PreviousPlace
 import com.io.eatdecider.models.format
 import java.time.LocalDate
+import java.util.*
 
 class Repository(private val databaseDao: HistoryDatabaseDao) {
 
@@ -13,6 +14,7 @@ class Repository(private val databaseDao: HistoryDatabaseDao) {
         return try {
             val history: MutableList<PreviousPlace> = databaseDao.getAll().map {
                 PreviousPlace(
+                    id = UUID.randomUUID().toString(),
                     imageId = it.imageId,
                     placeName = it.placeName,
                     dayOfWeek = it.dayOfWeek

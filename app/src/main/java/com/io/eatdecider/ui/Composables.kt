@@ -1,12 +1,17 @@
 package com.io.eatdecider.ui
 
-import androidx.compose.animation.core.animateDpAsState
+import android.annotation.SuppressLint
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.stopScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -54,10 +59,18 @@ fun AppBar() {
         title = { Text(TITLE) })
 }
 
-@OptIn(ExperimentalUnitApi::class)
+@SuppressLint("CoroutineCreationDuringComposition")
+@OptIn(ExperimentalUnitApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun PlaceToEatPickerScreen() {
-    val state = remember { mutableStateOf(Place(imageId = R.drawable.ic_toolbar_icon, placeName = NOT_DECIDED)) }
+    val state = remember {
+        mutableStateOf(
+            Place(
+                imageId = R.drawable.ic_toolbar_icon,
+                placeName = NOT_DECIDED
+            )
+        )
+    }
 
     val viewModel: PlaceToEatViewModel = viewModel()
 
@@ -82,11 +95,11 @@ fun PlaceToEatPickerScreen() {
     val scrollState = rememberLazyListState()
     val offset = kotlin.math.min(
         1f,
-        1 - (remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset } }.value / 500f +
+        1 - (remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset } }.value / 1000f +
                 remember { derivedStateOf { scrollState.firstVisibleItemIndex } }.value)
     )
 
-    val size by animateDpAsState(targetValue = max(10.dp, 325.dp * offset))
+    val size by animateDpAsState(targetValue = max(10.dp, 300.dp * offset))
 
     //SnackBar state
     val scaffoldState: ScaffoldState = rememberScaffoldState()
@@ -128,7 +141,7 @@ fun PlaceToEatPickerScreen() {
                         contentDescription = null,
                         modifier = Modifier
                             .align(CenterHorizontally)
-                            .size(200.dp, 200.dp)
+                            .size(150.dp, 150.dp)
                             .padding(16.dp)
                             .border(1.dp, Color.Black, CircleShape)
                             .clip(CircleShape),
@@ -207,20 +220,37 @@ fun PlaceToEatPickerScreen() {
             }
 
             LazyColumn(state = scrollState) {
-                items(list) { item -> HistoryHolder(item) }
+                itemsIndexed(
+                    items = list,
+                    key = { _, item -> item.id },
+                ) { _, item ->
+                    HistoryHolder(
+                        item = item,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp)
+                            .animateItemPlacement(
+                                animationSpec = spring(
+                                    stiffness = Spring.StiffnessLow,
+                                    visibilityThreshold = IntOffset.VisibilityThreshold
+                                )
+                            )
+                    )
+                    //TODO: fix changing offset when adding new elements
+                    // Check if u can add elements horizontally
+                    // to escape changing scrollOffset
+                }
             }
         }
     }
 }
 
 @Composable
-fun HistoryHolder(item: PreviousPlace) {
+fun HistoryHolder(item: PreviousPlace, modifier: Modifier) {
     Card(
         shape = RoundedCornerShape(24.dp),
         elevation = 4.dp,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp)
+        modifier = modifier
     ) {
         Image(
             painter = painterResource(id = item.imageId),
